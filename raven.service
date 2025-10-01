@@ -1,0 +1,17 @@
+[Unit]
+Description=Raven Telegram Command Station
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/raven
+EnvironmentFile=/opt/raven/.env
+ExecStart=/usr/bin/python -m raven.bot
+Restart=on-failure
+RestartSec=5
+User=www-data
+Group=www-data
+
+[Install]
+WantedBy=multi-user.target
