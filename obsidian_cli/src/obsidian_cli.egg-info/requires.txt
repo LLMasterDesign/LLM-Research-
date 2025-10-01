@@ -1,0 +1,7 @@
+click
+pyyaml
+rich
+markdown-it-py==3.0.0
+mdformat
+mdformat-frontmatter
+mdformat-gfm

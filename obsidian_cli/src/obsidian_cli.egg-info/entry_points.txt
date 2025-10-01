@@ -1,0 +1,2 @@
+[console_scripts]
+obsidian = obsidian_cli.cli:main

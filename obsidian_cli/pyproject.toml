@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "obsidian-cli"
+version = "0.1.0"
+description = "CLI to lint and chunk Obsidian markdown notes"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{ name = "AI Assistant" }]
+dependencies = [
+  "click",
+  "pyyaml",
+  "rich",
+  "markdown-it-py==3.0.0",
+  "mdformat",
+  "mdformat-frontmatter",
+  "mdformat-gfm",
+]
+
+[project.scripts]
+obsidian = "obsidian_cli.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
