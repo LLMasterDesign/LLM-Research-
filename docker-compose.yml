@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+  raven:
+    build: .
+    container_name: raven-bot
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
