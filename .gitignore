@@ -1,0 +1,98 @@
+# Τ{Raven} - Git Ignore
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Backups
+backups/
+*.sql
+*.backup
+
+# Docker
+.docker/
+*.pid
+
+# n8n
+.n8n/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Node modules (if web interface is added)
+node_modules/
+npm-debug.log*
+
+# Build outputs
+dist/
+build/
+out/
+
+# OS specific
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Secrets (extra safety)
+*secret*
+*password*
+*token*
+*key*.txt
+credentials/
+
+# Test outputs
+test-results/
+playwright-report/
+
+# Documentation builds
+docs/_build/
+site/

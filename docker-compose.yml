@@ -1,0 +1,145 @@
+version: '3.8'
+
+services:
+  # Raven Telegram Bot
+  raven-bot:
+    build:
+      context: ./telegram-bot
+      dockerfile: Dockerfile
+    container_name: raven-telegram-bot
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ${WORKSPACE_PATH:-/workspace}:/workspace:ro
+      - ./logs:/app/logs
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - raven-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis for session management
+  redis:
+    image: redis:7-alpine
+    container_name: raven-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-}
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - raven-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  # PostgreSQL for conversation history (optional)
+  postgres:
+    image: postgres:16-alpine
+    container_name: raven-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-raven_db}
+      POSTGRES_USER: ${POSTGRES_USER:-raven}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - raven-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-raven}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # n8n for workflow automation (optional)
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: raven-n8n
+    restart: unless-stopped
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=${N8N_USER:-admin}
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_PASSWORD:-changeme}
+      - N8N_HOST=${N8N_HOST:-localhost}
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=${N8N_WEBHOOK_URL:-http://localhost:5678/}
+      - GENERIC_TIMEZONE=${TZ:-UTC}
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n-data:/home/node/.n8n
+      - ${WORKSPACE_PATH:-/workspace}:/workspace:ro
+    networks:
+      - raven-network
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:5678/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Web Interface (optional - Telegram Mini App)
+  web-interface:
+    build:
+      context: ./web-interface
+      dockerfile: Dockerfile
+    container_name: raven-web
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=${WEB_API_URL:-http://localhost:3000}
+      - TELEGRAM_BOT_USERNAME=${TELEGRAM_BOT_USERNAME}
+    ports:
+      - "3000:3000"
+    networks:
+      - raven-network
+    depends_on:
+      - raven-bot
+    profiles:
+      - web  # Only start with --profile web
+
+  # Nginx reverse proxy (optional)
+  nginx:
+    image: nginx:alpine
+    container_name: raven-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./infra/nginx/ssl:/etc/nginx/ssl:ro
+    networks:
+      - raven-network
+    depends_on:
+      - raven-bot
+      - n8n
+      - web-interface
+    profiles:
+      - production  # Only start with --profile production
+
+volumes:
+  redis-data:
+    driver: local
+  postgres-data:
+    driver: local
+  n8n-data:
+    driver: local
+
+networks:
+  raven-network:
+    driver: bridge
