@@ -3,6 +3,7 @@ import sys
 from pathlib import Path
 import click
 from rich.console import Console
+from .config import load_config
 
 console = Console()
 
@@ -26,8 +27,12 @@ def main() -> None:
 
 @main.command()
 @click.argument("path", required=False, type=click.Path(path_type=Path))
+@click.option("--config", "config_path", type=click.Path(path_type=Path), help="Optional YAML config file")
+@click.option("--include", multiple=True, help="Include glob(s), defaults to **/*.md")
+@click.option("--exclude", multiple=True, help="Exclude glob(s), defaults exclude .obsidian, .git, node_modules")
 @click.option("--fix", is_flag=True, help="Apply fixes like formatting")
-def lint(path: Path | None, fix: bool) -> None:
+@click.option("--report", "report_path", type=click.Path(path_type=Path), help="Write lint report JSONL to path")
+def lint(path: Path | None, config_path: Path | None, include: tuple[str, ...], exclude: tuple[str, ...], fix: bool, report_path: Path | None) -> None:
     """Lint markdown notes in a vault or directory."""
     root = find_vault_path(path)
     console.log(f"Lint target: {root}")
@@ -36,7 +41,10 @@ def lint(path: Path | None, fix: bool) -> None:
     except Exception as exc:  # pragma: no cover
         console.print(f"[red]Failed to import lint module: {exc}")
         sys.exit(2)
-    issues = lint_directory(root, apply_fixes=fix)
+    cfg = load_config(root, config_path)
+    include_globs = list(include) if include else cfg.include
+    exclude_globs = list(exclude) if exclude else cfg.exclude
+    issues = lint_directory(root, apply_fixes=fix, include_globs=include_globs, exclude_globs=exclude_globs, report_path=report_path)
     if issues:
         for issue in issues:
             console.print(issue)
@@ -46,10 +54,14 @@ def lint(path: Path | None, fix: bool) -> None:
 
 @main.command()
 @click.argument("path", required=False, type=click.Path(path_type=Path))
+@click.option("--config", "config_path", type=click.Path(path_type=Path), help="Optional YAML config file")
+@click.option("--include", multiple=True, help="Include glob(s), defaults to **/*.md")
+@click.option("--exclude", multiple=True, help="Exclude glob(s), defaults exclude .obsidian, .git, node_modules")
 @click.option("--out", "out_path", type=click.Path(path_type=Path), default=Path("chunks.jsonl"))
+@click.option("--format", "out_format", type=click.Choice(["jsonl", "markdown"], case_sensitive=False), default="jsonl")
 @click.option("--strategy", type=click.Choice(["headers", "tokens"], case_sensitive=False), default="headers")
 @click.option("--max-chars", type=int, default=1200, help="Max chunk size for token strategy")
-def chunk(path: Path | None, out_path: Path, strategy: str, max_chars: int) -> None:
+def chunk(path: Path | None, config_path: Path | None, include: tuple[str, ...], exclude: tuple[str, ...], out_path: Path, out_format: str, strategy: str, max_chars: int) -> None:
     """Chunk markdown notes to JSONL."""
     root = find_vault_path(path)
     console.log(f"Chunk target: {root}")
@@ -58,6 +70,9 @@ def chunk(path: Path | None, out_path: Path, strategy: str, max_chars: int) -> N
     except Exception as exc:  # pragma: no cover
         console.print(f"[red]Failed to import chunk module: {exc}")
         sys.exit(2)
-    num = chunk_directory(root, out_path=out_path, strategy=strategy, max_chars=max_chars)
+    cfg = load_config(root, config_path)
+    include_globs = list(include) if include else cfg.include
+    exclude_globs = list(exclude) if exclude else cfg.exclude
+    num = chunk_directory(root, include_globs=include_globs, exclude_globs=exclude_globs, out_path=out_path, out_format=out_format, strategy=strategy, max_chars=max_chars)
     console.print(f"[green]Wrote {num} chunks to {out_path}")
 

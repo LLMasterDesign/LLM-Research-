@@ -2,6 +2,7 @@ README.md
 pyproject.toml
 src/obsidian_cli/chunk.py
 src/obsidian_cli/cli.py
+src/obsidian_cli/config.py
 src/obsidian_cli/lint.py
 src/obsidian_cli.egg-info/PKG-INFO
 src/obsidian_cli.egg-info/SOURCES.txt

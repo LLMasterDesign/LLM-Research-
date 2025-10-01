@@ -3,11 +3,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 import re
-from typing import Iterable, List
+from typing import Iterable, List, Optional
 
 from rich.text import Text
 from mdformat import plugins
 import mdformat
+from .config import iter_markdown_files
 
 
 MARKDOWN_FILE_REGEX = re.compile(r"^.*\.md$")
@@ -23,11 +24,8 @@ class LintIssue:
         return f"{self.file_path}:{self.line}: {self.message}"
 
 
-def _iter_markdown_files(root: Path) -> Iterable[Path]:
-    for path in root.rglob("*.md"):
-        if ".obsidian" in path.parts:
-            continue
-        yield path
+def _iter_markdown_files(root: Path, include_globs: Optional[List[str]] = None, exclude_globs: Optional[List[str]] = None) -> Iterable[Path]:
+    yield from iter_markdown_files(root, include_globs=include_globs, exclude_globs=exclude_globs)
 
 
 def _lint_file(contents: str, file_path: Path) -> List[LintIssue]:
@@ -68,9 +66,10 @@ def _apply_fixes(contents: str, file_path: Path) -> str:
     return fixed
 
 
-def lint_directory(root: Path, apply_fixes: bool = False) -> List[Text | str]:
+def lint_directory(root: Path, apply_fixes: bool = False, include_globs: Optional[List[str]] = None, exclude_globs: Optional[List[str]] = None, report_path: Optional[Path] = None) -> List[Text | str]:
     issues: List[Text | str] = []
-    for file_path in _iter_markdown_files(root):
+    jsonl: List[str] = []
+    for file_path in _iter_markdown_files(root, include_globs=include_globs, exclude_globs=exclude_globs):
         contents = file_path.read_text(encoding="utf-8", errors="ignore")
         file_issues = _lint_file(contents, file_path)
         if apply_fixes:
@@ -78,5 +77,15 @@ def lint_directory(root: Path, apply_fixes: bool = False) -> List[Text | str]:
             if fixed != contents:
                 file_path.write_text(fixed, encoding="utf-8")
         issues.extend(file_issues)
+        for it in file_issues:
+            jsonl.append(
+                "{"
+                f"\"file\": \"{str(it.file_path)}\", "
+                f"\"line\": {it.line}, "
+                f"\"message\": \"{it.message.replace('\\', '\\\\').replace('"', '\\"')}\""
+                "}"
+            )
+    if report_path and jsonl:
+        report_path.write_text("\n".join(jsonl) + "\n", encoding="utf-8")
     return issues
 
