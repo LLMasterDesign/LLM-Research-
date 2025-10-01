@@ -1,0 +1,5 @@
+markdown-it-py==3.0.0
+pyyaml==6.0.1
+python-frontmatter==1.1.0
+rich==13.7.0
+click==8.1.7
