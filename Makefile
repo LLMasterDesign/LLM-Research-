@@ -1,10 +1,11 @@
-.PHONY: help install lint scan chunk organize clean
+.PHONY: help install lint scan chunk organize clean run-bot env-example
 
 help:
 	@echo "Obsidian Vault Management Tools"
 	@echo ""
 	@echo "Available commands:"
 	@echo "  make install      - Install Python dependencies"
+	@echo "  make run-bot      - Run the Telegram trading mission bot"
 	@echo "  make lint         - Lint all markdown files"
 	@echo "  make scan         - Scan vault for issues"
 	@echo "  make chunk        - Chunk large files"
@@ -13,6 +14,16 @@ help:
 
 install:
 	pip install -r requirements.txt
+
+run-bot:
+	python3 -m trading_mission_bot.bot
+
+env-example:
+	@echo "TELEGRAM_BOT_TOKEN=123:abc" > .env
+	@echo "PHAMES_CHAT_ID=-1001234567890" >> .env
+	@echo "MISSION_CHAT_ID=-1001234567890" >> .env
+	@echo "PHAMES_USERNAME=phames_bot" >> .env
+	@echo "AUTO_LOCK=1" >> .env
 
 lint:
 	python3 obsidian-tools/markdown_linter.py notes/
