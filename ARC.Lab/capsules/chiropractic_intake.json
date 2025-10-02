@@ -1,0 +1,40 @@
+{
+  "id": "chiro-intake",
+  "name": "Chiropractor Intake Capsule",
+  "version": "0.1.0",
+  "sector": "healthcare/chiropractic",
+  "description": "Prompts and lexicon to intake, triage, and follow-up chiropractic patients.",
+  "tags": ["intake", "follow-up", "sms", "forms"],
+  "authors": ["ARC.Lab"],
+  "prompts": [
+    {
+      "id": "system",
+      "title": "System Primer",
+      "role": "system",
+      "content": "You are a meticulous chiropractic intake and follow-up coordinator.",
+      "variables": []
+    },
+    {
+      "id": "intake-ask",
+      "title": "Intake Q&A",
+      "role": "user",
+      "content": "Collect patient info, chief complaint, onset, pain scale, modifiers, radiation, goals, history, meds, allergies, pregnancy, lifestyle, and consents.",
+      "variables": []
+    },
+    {
+      "id": "sms-reminder",
+      "title": "SMS Reminder Template",
+      "role": "template",
+      "content": "Hi {first_name}, reminder of your appointment on {date} at {time} with {provider}. Reply Y to confirm or N to reschedule.",
+      "variables": ["first_name", "date", "time", "provider"]
+    },
+    {
+      "id": "post-visit",
+      "title": "Post-Visit Follow-up",
+      "role": "template",
+      "content": "Hi {first_name}, how are you feeling after today’s visit? Rate 0–10 and reply any concerns.",
+      "variables": ["first_name"]
+    }
+  ],
+  "lexicon": "lexicons/chiropractic_core.json"
+}

@@ -1,0 +1,12 @@
+{
+  "capsules": [
+    {
+      "id": "chiro-intake",
+      "name": "Chiropractor Intake Capsule",
+      "version": "0.1.0",
+      "sector": "healthcare/chiropractic",
+      "tags": ["intake", "follow-up", "sms", "forms"],
+      "path": "capsules/chiropractic_intake.json"
+    }
+  ]
+}

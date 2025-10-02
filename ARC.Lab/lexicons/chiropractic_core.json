@@ -1,0 +1,17 @@
+{
+  "name": "Chiropractic Core Lexicon",
+  "description": "Noun-verbs and key terms to intensify intake and care plan prompts.",
+  "industry": "healthcare/chiropractic",
+  "terms": [
+    {"term": "subluxation", "pos": "noun", "power": 4, "synonyms": ["joint dysfunction"]},
+    {"term": "palpate", "pos": "verb", "power": 3, "synonyms": ["examine by touch"]},
+    {"term": "mobilize", "pos": "verb", "power": 3, "synonyms": ["increase joint movement"]},
+    {"term": "adjust", "pos": "verb", "power": 4, "synonyms": ["manipulate"]},
+    {"term": "radiate", "pos": "verb", "power": 2, "synonyms": ["spread", "shoot"]},
+    {"term": "paresthesia", "pos": "noun", "power": 3, "synonyms": ["tingling", "numbness"]},
+    {"term": "myofascial", "pos": "adjective", "power": 3},
+    {"term": "orthotics", "pos": "noun", "power": 2},
+    {"term": "ergonomics", "pos": "noun", "power": 2},
+    {"term": "therapeutics", "pos": "noun", "power": 2}
+  ]
+}
