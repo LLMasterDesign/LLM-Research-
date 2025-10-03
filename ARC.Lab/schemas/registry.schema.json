@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://llmdesign.ai/schemas/registry.schema.json",
+  "title": "ARC.Lab Registry",
+  "type": "object",
+  "required": ["capsules"],
+  "properties": {
+    "capsules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "version", "sector", "path"],
+        "properties": {
+          "id": {"type": "string"},
+          "name": {"type": "string"},
+          "version": {"type": "string"},
+          "sector": {"type": "string"},
+          "tags": {"type": "array", "items": {"type": "string"}},
+          "path": {"type": "string"},
+          "created_at": {"type": "string", "format": "date-time"},
+          "updated_at": {"type": "string", "format": "date-time"}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://llmdesign.ai/schemas/lexicon.schema.json",
+  "title": "Lexicon",
+  "type": "object",
+  "required": ["name", "terms"],
+  "properties": {
+    "name": {"type": "string"},
+    "description": {"type": "string"},
+    "industry": {"type": "string"},
+    "terms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["term", "pos"],
+        "properties": {
+          "term": {"type": "string"},
+          "pos": {"type": "string", "enum": ["noun", "verb", "noun-verb", "adjective", "adverb", "phrase"]},
+          "power": {"type": "integer", "minimum": 1, "maximum": 5},
+          "synonyms": {"type": "array", "items": {"type": "string"}},
+          "examples": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
