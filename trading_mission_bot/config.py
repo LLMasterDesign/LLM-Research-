@@ -29,6 +29,15 @@ class Settings:
     data_dir: str = os.environ.get('DATA_DIR', 'data')
     timezone: str = os.environ.get('TIMEZONE', 'UTC')
     auto_lock: bool = _env_bool('AUTO_LOCK', True)
+    # Email / IMAP configuration
+    imap_host: str | None = None
+    imap_username: str | None = None
+    imap_password: str | None = None
+    imap_port: int = int(os.environ.get('IMAP_PORT', '993'))
+    imap_mailbox: str = os.environ.get('IMAP_MAILBOX', 'INBOX')
+    imap_use_ssl: bool = _env_bool('IMAP_USE_SSL', True)
+    imap_keywords: str = os.environ.get('IMAP_KEYWORDS', '')
+    imap_state_path: str = os.environ.get('IMAP_STATE_PATH', os.path.join(os.environ.get('DATA_DIR', 'data'), 'imap_state.json'))
 
     @staticmethod
     def from_env() -> 'Settings':
@@ -42,7 +51,7 @@ class Settings:
         phames_thread_id = os.environ.get('PHAMES_THREAD_ID')
         mission_thread_parsed = int(mission_thread_id) if mission_thread_id and mission_thread_id.isdigit() else None
         phames_thread_parsed = int(phames_thread_id) if phames_thread_id and phames_thread_id.isdigit() else None
-        return Settings(
+        settings = Settings(
             telegram_token=token,
             phames_chat_id=str(phames_chat or ''),
             mission_chat_id=str(mission_chat or ''),
@@ -50,3 +59,8 @@ class Settings:
             mission_thread_id=mission_thread_parsed,
             phames_thread_id=phames_thread_parsed,
         )
+        # Optional IMAP config
+        settings.imap_host = os.environ.get('IMAP_HOST')
+        settings.imap_username = os.environ.get('IMAP_USERNAME')
+        settings.imap_password = os.environ.get('IMAP_PASSWORD')
+        return settings

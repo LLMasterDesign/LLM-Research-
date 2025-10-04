@@ -5,6 +5,7 @@ from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, ContextTypes, filters
 
 from .config import Settings
+from .email_agent import EmailAgent, EmailConfig, format_summaries_for_telegram
 from .state import StateStore
 from .phames import infer_bias, is_four_hour_long, is_four_hour_short
 from .portfolio import Portfolio
@@ -138,7 +139,7 @@ async def daily_checkin(context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
-        "/start, /goal <text>, /lock, /status, /pos <sym> <amt>, /value"
+        "/start, /goal <text>, /lock, /status, /pos <sym> <amt>, /value, /mail [N]"
     )
 
 
@@ -165,6 +166,38 @@ def run() -> None:
     app.add_handler(CommandHandler('value', value))
 
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo_analyze))
+
+    async def mail_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        try:
+            limit = int(context.args[0]) if context.args else 8
+        except Exception:
+            limit = 8
+
+        if not settings.imap_host or not settings.imap_username or not settings.imap_password:
+            await update.message.reply_text(BADASS_PREFIX + "Email not configured. Set IMAP_HOST/IMAP_USERNAME/IMAP_PASSWORD.")
+            return
+
+        cfg = EmailConfig(
+            host=settings.imap_host,
+            username=settings.imap_username,
+            password=settings.imap_password,
+            port=settings.imap_port,
+            mailbox=settings.imap_mailbox,
+            use_ssl=settings.imap_use_ssl,
+            state_path=settings.imap_state_path,
+            keywords=settings.imap_keywords,
+            max_fetch=max(5, min(50, limit)),
+        )
+        agent = EmailAgent(cfg)
+        try:
+            items = agent.fetch_new(limit=limit)
+            text = format_summaries_for_telegram(items, max_items=limit)
+        except Exception as e:
+            text = BADASS_PREFIX + f"Email fetch error: {e}"
+
+        await update.message.reply_text(text)
+
+    app.add_handler(CommandHandler('mail', mail_cmd))
 
     mission_chat = _parse_chat_id(settings.mission_chat_id)
     if mission_chat is not None:
