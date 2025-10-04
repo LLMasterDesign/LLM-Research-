@@ -1,0 +1,496 @@
+{
+  "name": "Glyph Forge Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "glyph-events",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-glyph-events",
+      "name": "Webhook: Glyph Events",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "glyph-events"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json[\"event_type\"]}}",
+              "operation": "equals",
+              "value2": "glyph_created"
+            }
+          ]
+        }
+      },
+      "id": "switch-event-type",
+      "name": "Switch: Event Type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO usage_log (glyph_id, user_id, context) VALUES ({{$json[\"glyph_id\"]}}, {{$json[\"user_id\"]}}, 'webhook')",
+        "additionalFields": {}
+      },
+      "id": "postgres-log-usage",
+      "name": "PostgreSQL: Log Usage",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [650, 200],
+      "credentials": {
+        "postgres": {
+          "id": "1",
+          "name": "Glyph Forge DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "// Check if user unlocked achievement\nconst glyphCount = $json.user_glyph_count || 0;\nconst tokenCount = $json.token_count || 0;\n\nlet achievements = [];\n\nif (glyphCount === 1) {\n  achievements.push('first_glyph');\n}\n\nif (glyphCount === 10) {\n  achievements.push('ten_glyphs');\n}\n\nif (glyphCount === 50) {\n  achievements.push('fifty_glyphs');\n}\n\nif (tokenCount === 27) {\n  achievements.push('perfect_27');\n}\n\nreturn achievements.map(type => ({\n  user_id: $json.user_id,\n  achievement_type: type\n}));"
+      },
+      "id": "function-check-achievements",
+      "name": "Function: Check Achievements",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [650, 400]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT award_achievement({{$json[\"user_id\"]}}, '{{$json[\"achievement_type\"]}}')",
+        "additionalFields": {}
+      },
+      "id": "postgres-award-achievement",
+      "name": "PostgreSQL: Award Achievement",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [850, 400],
+      "credentials": {
+        "postgres": {
+          "id": "1",
+          "name": "Glyph Forge DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT g.name, g.text, g.usage_count, u.username FROM glyphs g JOIN users u ON g.user_id = u.telegram_id WHERE g.is_featured = TRUE AND g.usage_count > 100 ORDER BY g.usage_count DESC LIMIT 5",
+        "additionalFields": {}
+      },
+      "id": "postgres-trending-glyphs",
+      "name": "PostgreSQL: Get Trending",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [650, 600]
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json[\"telegram_chat_id\"]}}",
+        "text": "🎉 Achievement Unlocked!\n\n*{{$json[\"achievement_name\"]}}*\n{{$json[\"achievement_description\"]}}\n\n+{{$json[\"points\"]}} XP",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "telegram-send-achievement",
+      "name": "Telegram: Send Achievement",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [1050, 400],
+      "credentials": {
+        "telegramApi": {
+          "id": "2",
+          "name": "Glyph Forge Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "model",
+              "value": "gpt-4"
+            },
+            {
+              "name": "messages",
+              "value": "=[{\"role\": \"user\", \"content\": \"Compress this to exactly 27 tokens: {{$json.glyph_text}}\"}]"
+            },
+            {
+              "name": "max_tokens",
+              "value": "60"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "http-openai-compress",
+      "name": "HTTP: OpenAI Compress",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [650, 800],
+      "credentials": {
+        "openAiApi": {
+          "id": "3",
+          "name": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json[\"event_type\"]}}",
+              "operation": "equals",
+              "value2": "compress_request"
+            }
+          ]
+        }
+      },
+      "id": "if-compress-requested",
+      "name": "If: Compress Requested",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [450, 800]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\"success\": true, \"message\": \"Event processed\", \"data\": {{$json}}}",
+        "options": {}
+      },
+      "id": "respond-to-webhook",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1250, 300]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * *"
+            }
+          ]
+        }
+      },
+      "id": "cron-daily-report",
+      "name": "Cron: Daily Report",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [250, 1000]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT DATE(created_at) as date, COUNT(*) as new_glyphs, COUNT(DISTINCT user_id) as active_users FROM glyphs WHERE created_at >= CURRENT_DATE - INTERVAL '1 day' GROUP BY DATE(created_at)",
+        "additionalFields": {}
+      },
+      "id": "postgres-daily-stats",
+      "name": "PostgreSQL: Daily Stats",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [450, 1000],
+      "credentials": {
+        "postgres": {
+          "id": "1",
+          "name": "Glyph Forge DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "// Format daily report\nconst stats = $json;\n\nconst report = `📊 Glyph Forge Daily Report\n\n📅 Date: ${stats.date}\n📝 New Glyphs: ${stats.new_glyphs}\n👥 Active Users: ${stats.active_users}\n\n🔥 Keep forging!\n`;\n\nreturn [{\n  report: report,\n  admin_chat_id: \"-1001234567890\" // Replace with your admin chat ID\n}];"
+      },
+      "id": "function-format-report",
+      "name": "Function: Format Report",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [650, 1000]
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json[\"admin_chat_id\"]}}",
+        "text": "={{$json[\"report\"]}}",
+        "additionalFields": {}
+      },
+      "id": "telegram-send-report",
+      "name": "Telegram: Send Daily Report",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [850, 1000],
+      "credentials": {
+        "telegramApi": {
+          "id": "2",
+          "name": "Glyph Forge Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "event_type",
+              "value": "={{$json[\"event_type\"]}}"
+            },
+            {
+              "name": "user_id",
+              "value": "={{$json[\"user_id\"]}}"
+            },
+            {
+              "name": "glyph_id",
+              "value": "={{$json[\"glyph_id\"]}}"
+            },
+            {
+              "name": "token_count",
+              "value": "={{$json[\"token_count\"]}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "set-event-data",
+      "name": "Set: Event Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [450, 500]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "*/5 * * * *"
+            }
+          ]
+        }
+      },
+      "id": "cron-check-streaks",
+      "name": "Cron: Check Streaks",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [250, 1200]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT u.telegram_id, u.username, COUNT(DISTINCT DATE(ul.used_at)) as streak_days FROM users u JOIN usage_log ul ON u.telegram_id = ul.user_id WHERE ul.used_at >= CURRENT_DATE - INTERVAL '7 days' GROUP BY u.telegram_id HAVING COUNT(DISTINCT DATE(ul.used_at)) >= 7",
+        "additionalFields": {}
+      },
+      "id": "postgres-check-streaks",
+      "name": "PostgreSQL: Check 7-Day Streaks",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [450, 1200],
+      "credentials": {
+        "postgres": {
+          "id": "1",
+          "name": "Glyph Forge DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT award_achievement({{$json[\"telegram_id\"]}}, 'streak_7')",
+        "additionalFields": {}
+      },
+      "id": "postgres-award-streak",
+      "name": "PostgreSQL: Award Streak",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [650, 1200],
+      "credentials": {
+        "postgres": {
+          "id": "1",
+          "name": "Glyph Forge DB"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook: Glyph Events": {
+      "main": [
+        [
+          {
+            "node": "Switch: Event Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch: Event Type": {
+      "main": [
+        [
+          {
+            "node": "PostgreSQL: Log Usage",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Function: Check Achievements",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "PostgreSQL: Get Trending",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If: Compress Requested",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Function: Check Achievements": {
+      "main": [
+        [
+          {
+            "node": "PostgreSQL: Award Achievement",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PostgreSQL: Award Achievement": {
+      "main": [
+        [
+          {
+            "node": "Telegram: Send Achievement",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram: Send Achievement": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If: Compress Requested": {
+      "main": [
+        [
+          {
+            "node": "HTTP: OpenAI Compress",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP: OpenAI Compress": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cron: Daily Report": {
+      "main": [
+        [
+          {
+            "node": "PostgreSQL: Daily Stats",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PostgreSQL: Daily Stats": {
+      "main": [
+        [
+          {
+            "node": "Function: Format Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Function: Format Report": {
+      "main": [
+        [
+          {
+            "node": "Telegram: Send Daily Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cron: Check Streaks": {
+      "main": [
+        [
+          {
+            "node": "PostgreSQL: Check 7-Day Streaks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PostgreSQL: Check 7-Day Streaks": {
+      "main": [
+        [
+          {
+            "node": "PostgreSQL: Award Streak",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-10-04T00:00:00.000Z",
+  "versionId": "1"
+}
