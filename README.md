@@ -2,6 +2,50 @@
 
 A comprehensive suite of Python tools to lint, organize, and chunk your Obsidian markdown files.
 
+## Email summaries via Telegram
+
+Fetch unread emails via IMAP, auto-summarize key info (amounts, order/invoice/tracking IDs, actions), and receive them in Telegram using `/mail`.
+
+### Setup
+
+```bash
+pip install -r requirements.txt
+```
+
+### Create a Telegram bot
+- **Get token**: Talk to BotFather in Telegram, create a bot, copy the token.
+- Optionally note your chat ID if you want scheduled messages; not required for `/mail`.
+
+### Environment variables
+- **TELEGRAM_BOT_TOKEN**: Bot token from BotFather
+- **IMAP_HOST**: Your mail server (e.g. `imap.gmail.com`, `outlook.office365.com`, `imap.mail.me.com`, `imap.mail.yahoo.com`)
+- **IMAP_USERNAME**: Your email login (full address in many cases)
+- **IMAP_PASSWORD**: Password or app password (recommended)
+- Optional: **IMAP_PORT** (default 993), **IMAP_MAILBOX** (default `INBOX`), **IMAP_USE_SSL** (`true`/`false`, default `true`), **IMAP_KEYWORDS** (e.g. `invoice,delivery,appointment`), **IMAP_STATE_PATH** (default `data/imap_state.json`)
+- Optional (existing bot features): **PHAMES_CHAT_ID**, **MISSION_CHAT_ID**, **PHAMES_USERNAME**, **AUTO_LOCK**
+
+Example `.env`:
+
+```bash
+TELEGRAM_BOT_TOKEN=123456:ABC...
+IMAP_HOST=imap.gmail.com
+IMAP_USERNAME=you@gmail.com
+IMAP_PASSWORD=your-app-password
+IMAP_KEYWORDS=invoice,receipt,tracking,appointment
+```
+
+### Run the bot
+
+```bash
+python trading_mission_bot/bot.py
+```
+
+### Use in Telegram
+- Send **/mail** or **/mail 5** to get up to 5 most relevant new emails summarized.
+- Tip: add keywords via `IMAP_KEYWORDS` to boost items you care about.
+
+Security note: If using Gmail/Outlook/iCloud, create an app-specific password and ensure IMAP is enabled in your account settings.
+
 ## 🚀 Features
 
 - **Markdown Linter** - Validate markdown files for Obsidian best practices
