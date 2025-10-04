@@ -1,0 +1,96 @@
+version: '3.8'
+
+services:
+  # Telegram Bot
+  glyph-bot:
+    image: python:3.11-slim
+    container_name: glyph_forge_bot
+    restart: unless-stopped
+    working_dir: /app
+    command: >
+      sh -c "pip install --no-cache-dir python-telegram-bot==20.7 python-dotenv psycopg2-binary sqlalchemy &&
+             python -m bot"
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - DATABASE_URL=postgresql://glyph:glyphpass@db:5432/glyphforge
+      - N8N_WEBHOOK_URL=http://n8n:5678/webhook/glyph-events
+    volumes:
+      - ./bot:/app
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - glyph-net
+
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: glyph_db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=glyphforge
+      - POSTGRES_USER=glyph
+      - POSTGRES_PASSWORD=glyphpass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./seed.sql:/docker-entrypoint-initdb.d/seed.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U glyph -d glyphforge"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - glyph-net
+    ports:
+      - "5432:5432"
+
+  # n8n Automation
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: glyph_n8n
+    restart: unless-stopped
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=glyphadmin
+      - N8N_HOST=0.0.0.0
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=http://n8n:5678/
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=db
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=n8n
+      - DB_POSTGRESDB_USER=glyph
+      - DB_POSTGRESDB_PASSWORD=glyphpass
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./n8n-workflows:/home/node/.n8n/workflows
+    ports:
+      - "5678:5678"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - glyph-net
+
+  # Redis (for caching and queues)
+  redis:
+    image: redis:7-alpine
+    container_name: glyph_redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    networks:
+      - glyph-net
+    ports:
+      - "6379:6379"
+
+volumes:
+  postgres_data:
+  n8n_data:
+  redis_data:
+
+networks:
+  glyph-net:
+    driver: bridge

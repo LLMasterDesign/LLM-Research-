@@ -1,0 +1,29 @@
+🚀 GLYPH-IT FORGE - ONE-SHOT DEPLOYMENT
+========================================
+
+QUICKEST START (60 seconds):
+1. Edit .env file (add your Telegram bot token)
+2. Run: docker-compose up -d
+3. Done! Test bot in Telegram
+
+DOCUMENTATION:
+📖 QUICKSTART.md        - Deploy in 60 seconds (START HERE!)
+📋 DEPLOYMENT_PACKAGE.md - What's included & checklist
+🔧 DEPLOY.md            - Full deployment guide
+💡 README.md            - Complete documentation index
+
+FEATURES & DEVELOPMENT:
+🎯 FEATURE_RESEARCH.md       - 90+ feature ideas
+💻 IMPLEMENTATION_EXAMPLES.md - Code samples
+🗺️ ROADMAP.md               - 12-week development plan
+⚡ CHEAT_SHEET.md           - Quick reference
+🎯 27_TOKEN_STRATEGIES.md    - Token constraint strategies
+
+FILES YOU NEED:
+✅ docker-compose.yml    - Main config (4 services)
+✅ seed.sql             - Database with 15 glyphs
+✅ glyph-forge-workflow.json - n8n automation
+✅ .env.example         - Copy to .env and configure
+✅ bot/__main__.py      - Working bot code
+
+NEXT STEP: Open QUICKSTART.md
