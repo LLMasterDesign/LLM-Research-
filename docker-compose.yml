@@ -1,0 +1,76 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: ankane/pgvector:latest   # Postgres + pgvector
+    container_name: codex_postgres
+    environment:
+      POSTGRES_USER: codex
+      POSTGRES_PASSWORD: changeme
+      POSTGRES_DB: codexdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./seed.sql:/docker-entrypoint-initdb.d/seed.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U codex -d codexdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: codex_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  bot:
+    build: ./bot
+    container_name: codex_bot
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://codex:changeme@postgres:5432/codexdb
+      REDIS_URL: redis://redis:6379/0
+      TELEGRAM_TOKEN: ${TELEGRAM_TOKEN}
+    volumes:
+      - ./bot:/app
+    restart: unless-stopped
+
+  n8n:
+    image: n8nio/n8n
+    container_name: codex_n8n
+    ports:
+      - "5678:5678"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: postgres
+      DB_POSTGRESDB_PORT: 5432
+      DB_POSTGRESDB_DATABASE: codexdb
+      DB_POSTGRESDB_USER: codex
+      DB_POSTGRESDB_PASSWORD: changeme
+      N8N_BASIC_AUTH_ACTIVE: "true"
+      N8N_BASIC_AUTH_USER: admin
+      N8N_BASIC_AUTH_PASSWORD: ${N8N_PASSWORD:-changeme}
+    volumes:
+      - n8ndata:/home/node/.n8n
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  redisdata:
+  n8ndata:

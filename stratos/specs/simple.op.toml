@@ -1,0 +1,29 @@
+# ▛//▞▞ [⎊] :: SIMPLE.OP.SPEC ⫸
+#
+# Simple example without auth_key (unsigned ritual).
+# Uses [⎊] fallback marker instead of ⟦⎊⟧
+
+[ritual]
+ask = "///▙"
+boot = "[⎊]"
+seal = "::∎"
+# No auth_key = unsigned, will execute without validation
+
+[meta]
+name = "Simple.Test"
+version = "v1.0"
+operator = "USER"
+
+[kernel]
+purpose = ["test.engine"]
+rules = ["execute.steps"]
+identity = ["simple.test"]
+structure = ["sequential"]
+motion = ["stdout"]
+
+[[plan]]
+type = "shell"
+id = "test"
+cmd = "echo 'Simple test successful'"
+
+# ::∎

@@ -1,0 +1,75 @@
+{
+  "name": "Codex Telegram Memory",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": "message"
+      },
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1,
+      "position": [200, 300],
+      "credentials": {
+        "telegramApi": "Telegram Bot API"
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "const text = $json.message.text || '';\nconst banner = text.split('\\n')[0];\nconst hasSeal = text.includes(':: ∎');\nreturn [{json: {user_id: $json.message.from.id, text, banner, hasSeal}}];"
+      },
+      "name": "Extract Banner/Seal",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO events(user_id, kind, banner, seal, payload)\nVALUES ({{$json[\"user_id\"]}}, 'prompt.run', {{$json[\"banner\"]}}, {{$json[\"hasSeal\"] ? ':: ∎' : ''}}, json_build_object('text', {{$json[\"text\"]}}));"
+      },
+      "name": "Log Event",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [700, 300],
+      "credentials": {
+        "postgres": "Postgres Codex"
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "// optional: call embedding worker here\nreturn items;"
+      },
+      "name": "Embed & Store",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [950, 300]
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json[\"user_id\"]}}",
+        "text": "Banner and Seal logged. Memory Codex ∎"
+      },
+      "name": "Reply to User",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [1200, 300],
+      "credentials": {
+        "telegramApi": "Telegram Bot API"
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [[{"node": "Extract Banner/Seal","type": "main","index":0}]]
+    },
+    "Extract Banner/Seal": {
+      "main": [[{"node": "Log Event","type": "main","index":0}]]
+    },
+    "Log Event": {
+      "main": [[{"node": "Embed & Store","type": "main","index":0}]]
+    },
+    "Embed & Store": {
+      "main": [[{"node": "Reply to User","type": "main","index":0}]]
+    }
+  }
+}

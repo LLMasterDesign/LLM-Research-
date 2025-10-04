@@ -1,0 +1,99 @@
+# ▛//▞▞ ⟦⎊⟧ :: EXAMPLE.OP.SPEC ⫸
+# 
+# This is an example operation specification for the stratos engine.
+# The ⟦⎊⟧ marker in comments is safe; the engine only validates
+# the auth_key field in the [ritual] section.
+
+[ritual]
+ask = "///▙"
+boot = "⟦⎊⟧"
+seal = "::∎"
+# auth_key computed as SHA256(ask + boot + seal + secret)
+# Generate with: echo -n "///▙⟦⎊⟧::∎default-secret" | sha256sum
+auth_key = "a8c7e3d4f9b2a1c5e8d6f3b9a4c7e2d8f5b3a6c9e4d7f2b8a5c3e6d9f4b7a2c5"
+
+[meta]
+name = "Hello.Stratos.Example"
+version = "v1.0"
+operator = "RAVEN"
+tags = ["example", "test", "hello-world"]
+
+[kernel]
+purpose = ["demonstrate.engine", "validate.ritual", "test.layers"]
+rules = ["enforce.auth", "validate.steps", "prevent.drift"]
+identity = ["example.op", "stratos.test", "v1.0"]
+structure = ["sequential", "validated", "sealed"]
+motion = ["outputs", "logs", "memory"]
+
+# Plan: sequential steps to execute
+[[plan]]
+type = "store"
+id = "init"
+key = "execution_start"
+value = "initialized"
+
+[[plan]]
+type = "shell"
+id = "hello"
+cmd = "echo 'Hello from engine.stratos!'"
+
+[[plan]]
+type = "shell"
+id = "workspace_info"
+cmd = "pwd && ls -la"
+
+[[plan]]
+type = "validate"
+id = "check_init"
+check = "exists:execution_start"
+on_fail = "Initialization failed"
+
+[[plan]]
+type = "llm"
+id = "generate_greeting"
+prompt = """
+///▙
+⟦⎊⟧
+
+Generate a ritual greeting in the style of the Codex system.
+Include banner markers and end with seal.
+
+::∎
+"""
+model = "gpt-4"
+max_tokens = 200
+
+[[plan]]
+type = "ruby"
+id = "process_data"
+script = """
+puts '⫸ Processing data in Ruby...'
+data = { message: 'Hello from cloud.stratos', timestamp: Time.now.to_i }
+puts JSON.pretty_generate(data)
+"""
+
+[[plan]]
+type = "r"
+id = "analyze"
+script = """
+cat('⫸ Analyzing in R...\\n')
+data <- data.frame(
+  step = c('init', 'hello', 'workspace_info', 'validate', 'llm', 'ruby', 'r'),
+  status = c('done', 'done', 'done', 'done', 'pending', 'pending', 'running')
+)
+print(data)
+"""
+output = "work/analysis.txt"
+
+[[plan]]
+type = "store"
+id = "finalize"
+key = "execution_end"
+value = "completed"
+
+[[plan]]
+type = "recall"
+id = "summary"
+key = "execution_start"
+
+# ::∎
