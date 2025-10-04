@@ -247,7 +247,8 @@ class EmailAgent:
         limit = limit or self.config.max_fetch
         keywords = [kw.strip().lower() for kw in (self.config.keywords or "").split(",") if kw.strip()]
 
-        with self._connect() as client:  # type: ignore[attr-defined]
+        client = self._connect()
+        try:
             last_uid = self.state.last_uid
             if last_uid > 0:
                 criteria = f"(UID {last_uid + 1}:*)"
@@ -281,6 +282,11 @@ class EmailAgent:
 
             items.sort(key=lambda it: it.relevance, reverse=True)
             return items[:limit]
+        finally:
+            try:
+                client.logout()
+            except Exception:
+                pass
 
 
 def format_summaries_for_telegram(items: List[EmailItem], max_items: int = 8) -> str:
