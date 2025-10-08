@@ -12,3 +12,7 @@ walkdir = "2.4"
 [[bin]]
 name = "validator"
 path = "src/bin/validator.rs"
+
+[[bin]]
+name = "token_analyzer"
+path = "src/bin/token_analyzer.rs"
