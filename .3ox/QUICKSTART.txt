@@ -1,0 +1,52 @@
+╔═══════════════════════════════════════════════════════════════════════════╗
+║                    🦉 NOCTUA QUICK START GUIDE                            ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+1️⃣  BASIC LAUNCH (No dependencies needed)
+   $ python3 .3ox/owl.py
+   
+   - SQLite-only mode
+   - Local memory & history
+   - Automatic backups
+
+2️⃣  DASHBOARD (Install Flask first)
+   $ pip install flask flask-cors
+   $ python3 .3ox/dashboard.py
+   
+   Open: http://localhost:8080
+   
+   Features:
+   - n8n-inspired visual UI
+   - Floating folder blocks (drag & drop)
+   - Real-time stats
+
+3️⃣  TELEGRAM BOT (Optional)
+   $ pip install python-telegram-bot
+   
+   Edit .3ox/config.toml:
+   [telegram]
+   enabled = true
+   token = "YOUR_BOT_TOKEN"
+   
+   $ python3 .3ox/telegram_bot.py
+
+4️⃣  FULL INSTALLATION
+   $ pip install -r requirements.txt
+   
+   Includes:
+   - Redis support (optional)
+   - Flask dashboard
+   - Telegram integration
+
+📊 CHECK STATUS
+   $ tail -f .3ox/3ox.log
+   $ sqlite3 .3ox/noctua.db "SELECT COUNT(*) FROM mem"
+
+🔧 REBUILD
+   $ python3 build_noctua.py
+
+📖 FULL DOCS
+   - NOCTUA_README.md (complete guide)
+   - NOCTUA_DEPLOYMENT.txt (detailed info)
+
+🦉 NOCTUA is ready!

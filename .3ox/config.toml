@@ -1,0 +1,32 @@
+[persona]
+name = "NOCTUA"
+postscript = "🦉"
+identity = "The Owl - Local-first Continuity Agent"
+author = "Lucius Larz Master (RAVEN CODEX)"
+
+[continuity]
+db_path = ".3ox/noctua.db"
+log_path = ".3ox/3ox.log"
+key_path = ".3ox/!3ox.key"
+autobackup = true
+rotation_days = 7
+node_id = ""
+
+[redis]
+enabled = true
+host = "localhost"
+port = 6379
+db = 0
+prefix = "noctua:"
+
+[telegram]
+enabled = false
+token = ""
+allowed_users = []
+
+[dashboard]
+enabled = true
+host = "localhost"
+port = 8080
+style = "n8n"
+floating_folders = true

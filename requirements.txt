@@ -1,8 +1,21 @@
-markdown-it-py==3.0.0
-pyyaml==6.0.1
-python-frontmatter==1.1.0
-rich==13.7.0
-click==8.1.7
-python-telegram-bot==21.6
-python-dotenv==1.0.1
-requests==2.32.3
+# NOCTUA Requirements
+# Python 3.10+ required
+
+# Core dependencies
+tomli>=2.0.1; python_version < '3.11'
+
+# Optional: Redis support for distributed continuity
+redis>=5.0.0
+
+# Optional: Dashboard (n8n-inspired UI)
+flask>=3.0.0
+flask-cors>=4.0.0
+
+# Optional: Telegram bot integration
+python-telegram-bot>=20.0
+
+# Database (included in Python stdlib)
+# sqlite3 - built-in
+
+# Utilities
+python-dotenv>=1.0.0

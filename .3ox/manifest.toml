@@ -1,0 +1,19 @@
+[manifest]
+id = "NOCTUA"
+node_id = "e4a8da0b1ebaf6e6683f238b3e06ed554e9deb73d1b48c3e0f0dd26dcfb9738f"
+version = "1.0.0"
+builder = "noctua.builder.toml"
+
+[capabilities]
+continuity = true
+memory = true
+redis_backend = true
+telegram_integration = true
+dashboard = true
+folder_blocks = true
+
+[runtime]
+python_version = "3.10+"
+launch_command = "python .3ox/owl.py"
+mode = "background"
+restart_on_crash = true
