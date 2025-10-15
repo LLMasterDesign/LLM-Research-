@@ -1,0 +1,179 @@
+{
+  "course_id": "fundamentals_001",
+  "title": "Programming Fundamentals with BookWorm",
+  "description": "Master the core concepts of programming through guided, adaptive learning",
+  "version": "1.0.0",
+  "estimated_hours": 40,
+  "difficulty": "beginner",
+  
+  "learning_objectives": [
+    "Understand variables, data types, and memory concepts",
+    "Master control flow and logical reasoning",
+    "Build functions and modular code",
+    "Work with data structures effectively",
+    "Apply algorithms to solve problems",
+    "Debug and test code systematically"
+  ],
+  
+  "concepts": [
+    {
+      "id": "variables_basics",
+      "name": "Variables and Data Types",
+      "description": "Variables are named containers for storing values. Like labeled boxes, they hold different types of data (numbers, text, true/false) that your program can use and modify.",
+      "prerequisites": [],
+      "keywords": ["variable", "data type", "integer", "string", "boolean", "assignment"],
+      "difficulty": 1,
+      "estimated_time": 30,
+      "resources": ["library/books/variables_guide.md", "library/exercises/variables_practice.md"]
+    },
+    {
+      "id": "operators",
+      "name": "Operators and Expressions",
+      "description": "Operators are symbols that perform operations on values. They let you do math (+, -, *, /), compare values (>, <, ==), and combine logical conditions (and, or, not).",
+      "prerequisites": ["variables_basics"],
+      "keywords": ["operator", "arithmetic", "comparison", "logical", "expression"],
+      "difficulty": 2,
+      "estimated_time": 45,
+      "resources": ["library/books/operators_guide.md"]
+    },
+    {
+      "id": "control_flow_if",
+      "name": "Conditional Logic (if/else)",
+      "description": "Conditionals let your program make decisions. Like a choose-your-own-adventure book, the code takes different paths based on whether conditions are true or false.",
+      "prerequisites": ["variables_basics", "operators"],
+      "keywords": ["if", "else", "elif", "conditional", "branching", "decision"],
+      "difficulty": 3,
+      "estimated_time": 60,
+      "resources": ["library/books/conditionals_guide.md", "library/exercises/conditionals_practice.md"]
+    },
+    {
+      "id": "loops_while",
+      "name": "While Loops",
+      "description": "Loops repeat actions until a condition is met. A while loop is like saying 'keep doing this as long as X is true' - useful for unknown repetition counts.",
+      "prerequisites": ["control_flow_if"],
+      "keywords": ["while", "loop", "iteration", "repetition", "condition"],
+      "difficulty": 4,
+      "estimated_time": 60,
+      "resources": ["library/books/loops_guide.md"]
+    },
+    {
+      "id": "loops_for",
+      "name": "For Loops",
+      "description": "For loops iterate over sequences. Like processing items on an assembly line one by one, they're perfect when you know exactly how many times to repeat.",
+      "prerequisites": ["loops_while"],
+      "keywords": ["for", "loop", "iteration", "range", "sequence"],
+      "difficulty": 4,
+      "estimated_time": 60,
+      "resources": ["library/books/loops_guide.md", "library/exercises/loops_practice.md"]
+    },
+    {
+      "id": "functions_basics",
+      "name": "Functions and Parameters",
+      "description": "Functions are reusable blocks of code with a name. Like recipes, they take inputs (parameters), do something, and can return outputs. They keep code organized and DRY.",
+      "prerequisites": ["variables_basics", "operators"],
+      "keywords": ["function", "parameter", "argument", "return", "call", "definition"],
+      "difficulty": 5,
+      "estimated_time": 90,
+      "resources": ["library/books/functions_guide.md"]
+    },
+    {
+      "id": "lists_arrays",
+      "name": "Lists and Arrays",
+      "description": "Lists store multiple values in order. Like a shopping list, you can add items, remove them, access by position, and loop through all elements.",
+      "prerequisites": ["variables_basics", "loops_for"],
+      "keywords": ["list", "array", "index", "element", "collection", "sequence"],
+      "difficulty": 5,
+      "estimated_time": 75,
+      "resources": ["library/books/lists_guide.md", "library/exercises/lists_practice.md"]
+    },
+    {
+      "id": "dictionaries",
+      "name": "Dictionaries and Key-Value Pairs",
+      "description": "Dictionaries store data as key-value pairs. Like a real dictionary where you look up words (keys) to find definitions (values), they enable fast lookups and structured data.",
+      "prerequisites": ["variables_basics", "lists_arrays"],
+      "keywords": ["dictionary", "hash", "map", "key", "value", "lookup"],
+      "difficulty": 6,
+      "estimated_time": 75,
+      "resources": ["library/books/dictionaries_guide.md"]
+    },
+    {
+      "id": "string_manipulation",
+      "name": "String Operations",
+      "description": "Strings are text data. You can slice them (get parts), join them together, search within them, and transform them (uppercase, lowercase, replace).",
+      "prerequisites": ["variables_basics", "lists_arrays"],
+      "keywords": ["string", "text", "slice", "concatenation", "method"],
+      "difficulty": 4,
+      "estimated_time": 60,
+      "resources": ["library/books/strings_guide.md"]
+    },
+    {
+      "id": "error_handling",
+      "name": "Error Handling and Debugging",
+      "description": "Errors happen. Good code anticipates them with try/except blocks. Debugging is detective work: read errors, add print statements, test assumptions, isolate problems.",
+      "prerequisites": ["functions_basics"],
+      "keywords": ["error", "exception", "try", "catch", "debug", "traceback"],
+      "difficulty": 7,
+      "estimated_time": 90,
+      "resources": ["library/books/debugging_guide.md"]
+    },
+    {
+      "id": "algorithms_search",
+      "name": "Search Algorithms",
+      "description": "Searching finds items in collections. Linear search checks each item. Binary search (on sorted data) divides and conquers for speed. Understanding Big O notation helps compare efficiency.",
+      "prerequisites": ["lists_arrays", "functions_basics"],
+      "keywords": ["algorithm", "search", "linear", "binary", "efficiency", "big-o"],
+      "difficulty": 8,
+      "estimated_time": 120,
+      "resources": ["library/books/algorithms_guide.md"]
+    },
+    {
+      "id": "algorithms_sort",
+      "name": "Sorting Algorithms",
+      "description": "Sorting arranges data in order. Bubble sort swaps neighbors. Selection sort finds minimums. Merge sort divides and merges. Each has trade-offs in speed and memory.",
+      "prerequisites": ["algorithms_search"],
+      "keywords": ["algorithm", "sort", "bubble", "selection", "merge", "complexity"],
+      "difficulty": 9,
+      "estimated_time": 120,
+      "resources": ["library/books/algorithms_guide.md", "library/exercises/algorithms_practice.md"]
+    }
+  ],
+  
+  "learning_paths": {
+    "beginner": ["variables_basics", "operators", "control_flow_if", "loops_while", "loops_for", "functions_basics"],
+    "intermediate": ["lists_arrays", "dictionaries", "string_manipulation", "error_handling"],
+    "advanced": ["algorithms_search", "algorithms_sort"]
+  },
+  
+  "milestones": [
+    {
+      "id": "milestone_1",
+      "title": "Foundation Complete",
+      "required_concepts": ["variables_basics", "operators", "control_flow_if"],
+      "badge": "🎯 Logic Builder"
+    },
+    {
+      "id": "milestone_2",
+      "title": "Loops Mastered",
+      "required_concepts": ["loops_while", "loops_for"],
+      "badge": "🔄 Loop Master"
+    },
+    {
+      "id": "milestone_3",
+      "title": "Functions Unlocked",
+      "required_concepts": ["functions_basics"],
+      "badge": "⚡ Function Pro"
+    },
+    {
+      "id": "milestone_4",
+      "title": "Data Structures Expert",
+      "required_concepts": ["lists_arrays", "dictionaries", "string_manipulation"],
+      "badge": "📦 Data Wizard"
+    },
+    {
+      "id": "milestone_5",
+      "title": "Course Complete",
+      "required_concepts": ["algorithms_search", "algorithms_sort", "error_handling"],
+      "badge": "🏆 Fundamentals Master"
+    }
+  ]
+}

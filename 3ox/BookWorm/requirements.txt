@@ -1,0 +1,14 @@
+# BookWorm Learning System Dependencies
+
+# Core dependencies
+numpy>=1.24.0        # For vector operations in RAG
+redis>=5.0.0         # Redis client for memory/persistence
+
+# Optional but recommended
+sentence-transformers>=2.2.0  # Better embeddings (optional)
+openai>=1.0.0                # OpenAI embeddings (optional)
+
+# Development tools
+pytest>=7.4.0        # Testing
+black>=23.0.0        # Code formatting
+mypy>=1.5.0          # Type checking
