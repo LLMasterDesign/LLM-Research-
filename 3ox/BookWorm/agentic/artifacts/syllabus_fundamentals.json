@@ -1,0 +1,351 @@
+{
+  "title": "Programming Fundamentals with BookWorm",
+  "version": "1.0",
+  "modules": [
+    {
+      "id": "M1",
+      "title": "Foundation: Core Concepts",
+      "sections": [
+        {
+          "id": "M1.S1",
+          "title": "Variables and Data Types",
+          "items": [
+            {
+              "id": "M1.S1.I1",
+              "instruction": "Learn what variables are and how they store data. Variables are named containers (like labeled boxes) that hold different types of values: numbers, text, or true/false. They let you store, reuse, and update values throughout your program.",
+              "notes": [
+                "Think of variables as labeled storage boxes",
+                "Each variable has a name and a value",
+                "You can change what's in the box anytime"
+              ],
+              "assist": "Variables are the foundation of programming. Start by creating simple variables like: age = 25 or name = 'Lucius'. Try changing their values and printing them.",
+              "quiz": [
+                {
+                  "q": "What is a variable?",
+                  "choices": ["A. A function", "B. A named container for data", "C. A loop", "D. A file"],
+                  "answer": "B"
+                },
+                {
+                  "q": "Which is a valid variable name?",
+                  "choices": ["A. 1age", "B. user-name", "C. user_name", "D. user name"],
+                  "answer": "C"
+                },
+                {
+                  "q": "What symbol assigns a value to a variable?",
+                  "choices": ["A. ==", "B. =", "C. :", "D. ->"],
+                  "answer": "B"
+                },
+                {
+                  "q": "Can you change a variable's value after creation?",
+                  "choices": ["A. Yes", "B. No", "C. Only once", "D. Never"],
+                  "answer": "A"
+                },
+                {
+                  "q": "What's the main purpose of variables?",
+                  "choices": ["A. Decoration", "B. Store and reuse data", "C. Print output", "D. End programs"],
+                  "answer": "B"
+                }
+              ]
+            },
+            {
+              "id": "M1.S1.I2",
+              "instruction": "Understand the main data types: integers (whole numbers), floats (decimals), strings (text), and booleans (True/False). Each type behaves differently and is used for different purposes. You can check a variable's type with type() and convert between types.",
+              "notes": [
+                "int: 42, -10, 0",
+                "float: 3.14, -0.5, 2.0",
+                "str: 'hello', \"world\"",
+                "bool: True, False"
+              ],
+              "assist": "Try creating one variable of each type. Use type(variable_name) to verify. Practice converting: int('42'), float('3.14'), str(100).",
+              "quiz": [
+                {
+                  "q": "What type is the value 42?",
+                  "choices": ["A. str", "B. int", "C. float", "D. bool"],
+                  "answer": "B"
+                },
+                {
+                  "q": "What type is 'Hello'?",
+                  "choices": ["A. str", "B. int", "C. float", "D. text"],
+                  "answer": "A"
+                },
+                {
+                  "q": "What type is 3.14?",
+                  "choices": ["A. int", "B. decimal", "C. float", "D. double"],
+                  "answer": "C"
+                },
+                {
+                  "q": "How do you convert '100' to an integer?",
+                  "choices": ["A. str(100)", "B. int('100')", "C. float('100')", "D. bool('100')"],
+                  "answer": "B"
+                },
+                {
+                  "q": "What are the two boolean values?",
+                  "choices": ["A. yes/no", "B. 1/0", "C. True/False", "D. on/off"],
+                  "answer": "C"
+                }
+              ]
+            },
+            {
+              "id": "M1.S1.I3",
+              "instruction": "Master type conversion and common pitfalls. You can't add different types directly (like '5' + 10). Convert first, then operate. Watch for errors like trying to convert invalid strings. Practice safe conversions and understand when each type is appropriate.",
+              "notes": [
+                "Can't mix types in operations",
+                "Convert before combining",
+                "Some conversions can fail",
+                "Choose right type for your data"
+              ],
+              "assist": "Common pattern: get user input as string, convert to int/float for math, convert back to string for display. Try: num = int(input('Enter number: ')); result = num * 2; print(str(result))",
+              "quiz": [
+                {
+                  "q": "What happens with: '5' + 10",
+                  "choices": ["A. 15", "B. '510'", "C. Error", "D. '15'"],
+                  "answer": "C"
+                },
+                {
+                  "q": "What's the result of: int('5') + 10",
+                  "choices": ["A. '510'", "B. 15", "C. '15'", "D. Error"],
+                  "answer": "B"
+                },
+                {
+                  "q": "What type does input() return?",
+                  "choices": ["A. int", "B. float", "C. str", "D. depends"],
+                  "answer": "C"
+                },
+                {
+                  "q": "What's str(100) + str(200)?",
+                  "choices": ["A. 300", "B. '300'", "C. '100200'", "D. Error"],
+                  "answer": "C"
+                },
+                {
+                  "q": "Which conversion will error?",
+                  "choices": ["A. int('42')", "B. float('3.14')", "C. int('hello')", "D. str(42)"],
+                  "answer": "C"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "M1.S2",
+          "title": "Operators and Expressions",
+          "items": [
+            {
+              "id": "M1.S2.I4",
+              "instruction": "Learn arithmetic operators: + (add), - (subtract), * (multiply), / (divide), // (integer division), % (remainder), ** (power). These let you perform math operations on numbers. Practice combining operators and understanding operator precedence (order of operations).",
+              "notes": [
+                "/ gives float, // gives int",
+                "% gives remainder after division",
+                "** raises to power: 2**3 = 8",
+                "Use parentheses to control order"
+              ],
+              "assist": "Try: 10 + 5, 10 / 3, 10 // 3, 10 % 3, 2 ** 3. Notice the differences. Practice: (5 + 3) * 2 vs 5 + 3 * 2",
+              "quiz": [
+                {
+                  "q": "What's 10 // 3?",
+                  "choices": ["A. 3.33", "B. 3", "C. 4", "D. 1"],
+                  "answer": "B"
+                },
+                {
+                  "q": "What's 10 % 3?",
+                  "choices": ["A. 3", "B. 1", "C. 0", "D. 3.33"],
+                  "answer": "B"
+                },
+                {
+                  "q": "What's 2 ** 4?",
+                  "choices": ["A. 8", "B. 6", "C. 16", "D. 24"],
+                  "answer": "C"
+                },
+                {
+                  "q": "What's 5 + 3 * 2?",
+                  "choices": ["A. 16", "B. 11", "C. 13", "D. 10"],
+                  "answer": "B"
+                },
+                {
+                  "q": "What type does 10 / 2 return?",
+                  "choices": ["A. int", "B. float", "C. str", "D. depends"],
+                  "answer": "B"
+                }
+              ]
+            },
+            {
+              "id": "M1.S2.I5",
+              "instruction": "Master comparison operators: == (equal), != (not equal), > (greater), < (less), >= (greater or equal), <= (less or equal). These compare values and return True or False. Critical for making decisions in your code.",
+              "notes": [
+                "= assigns, == compares",
+                "Returns boolean (True/False)",
+                "Can compare numbers and strings",
+                "Chain comparisons: 1 < x < 10"
+              ],
+              "assist": "Try: 5 == 5, 5 != 3, 10 > 5, 'a' < 'b'. All return True or False. Don't confuse = with ==!",
+              "quiz": [
+                {
+                  "q": "What's 5 == 5?",
+                  "choices": ["A. 5", "B. True", "C. False", "D. Error"],
+                  "answer": "B"
+                },
+                {
+                  "q": "What's 10 != 5?",
+                  "choices": ["A. True", "B. False", "C. 5", "D. 10"],
+                  "answer": "A"
+                },
+                {
+                  "q": "What does = do?",
+                  "choices": ["A. Compare", "B. Assign", "C. Add", "D. Test"],
+                  "answer": "B"
+                },
+                {
+                  "q": "What's 'apple' < 'banana'?",
+                  "choices": ["A. True", "B. False", "C. Error", "D. 'apple'"],
+                  "answer": "A"
+                },
+                {
+                  "q": "What type do comparisons return?",
+                  "choices": ["A. int", "B. str", "C. bool", "D. float"],
+                  "answer": "C"
+                }
+              ]
+            },
+            {
+              "id": "M1.S2.I6",
+              "instruction": "Understand logical operators: and (both true), or (either true), not (opposite). These combine boolean values. Use them to create complex conditions. Master truth tables and short-circuit evaluation.",
+              "notes": [
+                "and: both must be True",
+                "or: at least one True",
+                "not: flips True/False",
+                "Short-circuit: stops early if answer known"
+              ],
+              "assist": "Try: True and True, True and False, True or False, not True. Build complex: (5 > 3) and (10 < 20)",
+              "quiz": [
+                {
+                  "q": "What's True and False?",
+                  "choices": ["A. True", "B. False", "C. Error", "D. None"],
+                  "answer": "B"
+                },
+                {
+                  "q": "What's True or False?",
+                  "choices": ["A. True", "B. False", "C. Error", "D. None"],
+                  "answer": "A"
+                },
+                {
+                  "q": "What's not True?",
+                  "choices": ["A. True", "B. False", "C. None", "D. Error"],
+                  "answer": "B"
+                },
+                {
+                  "q": "What's (5 > 3) and (2 < 1)?",
+                  "choices": ["A. True", "B. False", "C. Error", "D. None"],
+                  "answer": "B"
+                },
+                {
+                  "q": "When does 'A and B' return True?",
+                  "choices": ["A. A is True", "B. B is True", "C. Both True", "D. Either True"],
+                  "answer": "C"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M2",
+      "title": "Application: Practical Skills",
+      "sections": [
+        {
+          "id": "M2.S1",
+          "title": "Control Flow - Conditions",
+          "items": [
+            {
+              "id": "M2.S1.I1",
+              "instruction": "Learn if/else statements for decision making. Code runs different paths based on conditions. if checks a condition, else runs when condition is False. This is fundamental to program logic.",
+              "notes": [
+                "if condition: (note the colon)",
+                "Indent the code block",
+                "else: (optional)",
+                "Only one path executes"
+              ],
+              "assist": "Try: if 5 > 3: print('yes'). Then add: else: print('no'). Practice with variables: if age >= 18: print('adult')",
+              "quiz": [
+                {
+                  "q": "What's required after if condition?",
+                  "choices": ["A. :", "B. ;", "C. {", "D. nothing"],
+                  "answer": "A"
+                },
+                {
+                  "q": "How do you indent code blocks?",
+                  "choices": ["A. Tabs/spaces", "B. Curly braces", "C. Parentheses", "D. Brackets"],
+                  "answer": "A"
+                },
+                {
+                  "q": "When does else run?",
+                  "choices": ["A. Always", "B. If condition True", "C. If condition False", "D. Never"],
+                  "answer": "C"
+                },
+                {
+                  "q": "Can you have if without else?",
+                  "choices": ["A. Yes", "B. No", "C. Sometimes", "D. Only with elif"],
+                  "answer": "A"
+                },
+                {
+                  "q": "What happens if no condition is True?",
+                  "choices": ["A. Error", "B. Skip all", "C. Run else", "D. Repeat"],
+                  "answer": "C"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M3",
+      "title": "Integration: Advanced Topics",
+      "sections": [
+        {
+          "id": "M3.S1",
+          "title": "Algorithms Basics",
+          "items": [
+            {
+              "id": "M3.S1.I1",
+              "instruction": "Introduction to algorithms: step-by-step procedures to solve problems. Learn to think algorithmically: break problems into steps, consider efficiency, test edge cases.",
+              "notes": [
+                "Algorithm = recipe for solving",
+                "Focus on clarity first",
+                "Then optimize for speed",
+                "Test with different inputs"
+              ],
+              "assist": "Start simple: algorithm to find max number in list. Steps: 1) Start with first as max, 2) Check each number, 3) Update if larger.",
+              "quiz": [
+                {
+                  "q": "What is an algorithm?",
+                  "choices": ["A. A variable", "B. Step-by-step solution", "C. A loop", "D. A function"],
+                  "answer": "B"
+                },
+                {
+                  "q": "What should you prioritize first?",
+                  "choices": ["A. Speed", "B. Clarity", "C. Size", "D. Complexity"],
+                  "answer": "B"
+                },
+                {
+                  "q": "Why test edge cases?",
+                  "choices": ["A. Fun", "B. Required", "C. Find bugs", "D. Waste time"],
+                  "answer": "C"
+                },
+                {
+                  "q": "What's the first step in problem solving?",
+                  "choices": ["A. Code immediately", "B. Understand problem", "C. Optimize", "D. Test"],
+                  "answer": "B"
+                },
+                {
+                  "q": "How do you improve an algorithm?",
+                  "choices": ["A. Make it faster", "B. Make it clearer", "C. Test more", "D. All above"],
+                  "answer": "D"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
